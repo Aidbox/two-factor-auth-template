@@ -14,7 +14,7 @@ APP_INIT_CLIENT_ID=root
 APP_INIT_CLIENT_SECRET=secret
 APP_INIT_URL=http://devbox:8080
 
-APP_ID=app-{{cookiecutter.project_slug_dashed}}
+APP_ID=app-twofactor-demo
 APP_SECRET=secret
 APP_URL=http://backend:8081
 APP_PORT=8081
