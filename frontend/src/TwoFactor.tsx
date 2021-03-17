@@ -7,11 +7,9 @@ import { formatError } from 'aidbox-react/lib/utils/error';
 
 import { confirmTwoFactor, requestTwoFactor } from './services';
 import s from './TwoFactor.module.css'
-import { User } from './aidbox';
 
 interface Props {
     reload: () => void;
-    user: User;
 }
 
 interface ConfirmationState {
@@ -21,7 +19,8 @@ interface ConfirmationState {
 function useTwoFactor(props: Props) {
     const history = useHistory();
     const [token, setToken] = React.useState('');
-    const { reload, user } = props;
+    const [error, setError] = React.useState<string | undefined>();
+    const { reload } = props;
     const [confirmationState, setConfirmationState] = React.useState<ConfirmationState | null>(
         null,
     );
@@ -36,15 +35,15 @@ function useTwoFactor(props: Props) {
         }
     };
     const confirm = async () => {
+        setError(undefined);
+
         const response = await confirmTwoFactor({ token });
 
         if (isSuccess(response)) {
             reload();
             history.push('/app');
         } else {
-            return {
-                token: formatError(response.error),
-            };
+            setError(formatError(response.error));
         }
     };
 
@@ -52,18 +51,18 @@ function useTwoFactor(props: Props) {
         history.push('/app');
     };
 
-    return { user, confirmationState, request, skip, confirm, token, setToken };
+    return { confirmationState, request, skip, confirm, token, setToken, error };
 }
 
 export function TwoFactor(props: Props) {
     const {
-        user,
         confirmationState,
         request,
         skip,
         confirm,
         setToken,
-        token
+        token,
+        error
     } = useTwoFactor(props);
 
     if (confirmationState) {
@@ -88,7 +87,12 @@ export function TwoFactor(props: Props) {
                     <div>Input the token to finish setting up two-factor authentication</div>
                 </div>
                 <br/>
-                <form onSubmit={confirm}>
+                <form onSubmit={(event) => {
+                    event.preventDefault();
+                    return confirm();
+                }}>
+                    {error && <div className={s.error}>{error}</div>}
+
                     <input
                         type="number"
                         autoComplete="off"
@@ -99,8 +103,7 @@ export function TwoFactor(props: Props) {
                         value={token}
                         onChange={(event) => setToken(event.currentTarget.value)}
                     />
-
-                    <button type="submit">Confirm</button>
+                    <button type="submit" className={s.input}>Confirm</button>
                 </form>
             </div>
         );
@@ -112,13 +115,13 @@ export function TwoFactor(props: Props) {
             <br/>
             <br/>
             <div>
-                <button onClick={() => request()}>
+                <button onClick={() => request()} className={s.input}>
                     Enable using Authenticator app
                 </button>
             </div>
             <br/>
             <div>
-                <button onClick={skip}>
+                <button onClick={skip} className={s.input}>
                     Skip this step
                 </button>
             </div>

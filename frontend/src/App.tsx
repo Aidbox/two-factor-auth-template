@@ -78,23 +78,23 @@ export function App() {
                 <Auth/>
             </Route>
             <Route path="/signin" exact>
-                <header className={s.header}>
-                    <div>
-                        <button
-                            style={{ marginTop: 15 }}
-                            onClick={() => authorize()}
-                        >
-                            Login
-                        </button>
-                        <span> </span>
-                        <button
-                            style={{ marginTop: 15 }}
-                            onClick={() => signup()}
-                        >
-                            Sign up
-                        </button>
-                    </div>
-                </header>
+                <div className={s.container}>
+                    <button
+                        style={{ marginTop: 15 }}
+                        onClick={() => authorize()}
+                        className={s.input}
+                    >
+                        Login
+                    </button>
+                    <span> </span>
+                    <button
+                        style={{ marginTop: 15 }}
+                        onClick={() => signup()}
+                        className={s.input}
+                    >
+                        Sign up
+                    </button>
+                </div>
             </Route>
             <Redirect
                 to={{
@@ -112,18 +112,19 @@ export function App() {
                 <Route
                     path="/app"
                     render={() => (
-                        <div>Hello!
+                        <div className={s.container}>
+                            <div className={s.header}>Hello, {user.email || user.id}!</div>
 
-                            <button onClick={doLogout}>Logout</button>
+                            <button onClick={doLogout} className={s.input}>Logout</button>
                         </div>
                     )}
                 />
                 <Route path="/two-factor"
-                       render={() => <TwoFactor reload={reloadUser} user={user}/>}/>
+                       render={() => <TwoFactor reload={reloadUser}/>}/>
 
                 <Redirect
                     to={
-                        user.twoFactor?.enabled
+                        !user.email || user.twoFactor?.enabled
                             ? '/app'
                             : '/two-factor'
                     }
