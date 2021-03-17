@@ -1,5 +1,10 @@
 # two-factor-auth-template
 
+## Project dependencies
+
+- Docker
+- Yarn
+
 ## Initial setup
 
 Copy `.env.tpl` to `.env` and specify `AIDBOX_LICENSE_ID` and `AIDBOX_LICENSE_KEY`.
