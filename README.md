@@ -19,7 +19,7 @@ yarn
 ## Run
 
 ```
-docker-compose up
+docker-compose up -d
 cd frontend
 yarn start
 ```
