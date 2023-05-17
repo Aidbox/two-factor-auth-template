@@ -9,7 +9,6 @@ from app import config
 from app.sdk import sdk
 from app.utils import get_error_payload
 
-
 @sdk.operation(["POST"], ["webhook", "two-factor-confirmation"])
 async def auth_webhook_two_factor_confirmation_op(_operation, request):
     user = sdk.client.resource("User", **request["resource"]["user"])
@@ -21,7 +20,7 @@ async def auth_webhook_two_factor_confirmation_op(_operation, request):
 @sdk.operation(["POST"], ["app", "auth", "two-factor", "request"])
 async def auth_two_factor_request_op(_operation, request):
     # TODO: think about throttling based on User.ts
-    user = await sdk.client.resources("User").get(id=request["oauth/user"]["id"])
+    user = await sdk.client.resources("User").search(_id=request["oauth/user"]["id"]).get()
 
     if user.get_by_path(["twoFactor", "enabled"]):
         return web.json_response(
@@ -56,7 +55,7 @@ async def auth_two_factor_request_op(_operation, request):
 
 @sdk.operation(["POST"], ["app", "auth", "two-factor", "confirm"])
 async def auth_two_factor_confirm_op(_operation, request):
-    user = await sdk.client.resources("User").get(id=request["oauth/user"]["id"])
+    user = await sdk.client.resources("User").search(_id=request["oauth/user"]["id"]).get()
     if not user.get("twoFactor"):
         return web.json_response(
             get_error_payload("2FA is not requested", code="not_requested"), status=422
